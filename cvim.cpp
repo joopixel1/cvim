@@ -1,29 +1,17 @@
+#include "processor.hpp"
+#include "reader.hpp"
 #include "terminal.hpp"
-#include "utils.hpp"
 #include <cctype>
-#include <iostream>
 #include <unistd.h>
 
-using std::cout;
-
 int main() {
-  Terminal::getInstance();
+  Processor processor;
+  Reader reader;
 
-  for (; true;) {
-    char c = 0;
-    ensure(read(STDIN_FILENO, &c, 1) >= 0 or errno == EAGAIN, "read");
-
-    if (!c)
-      continue;
-
-    if (iscntrl(c)) {
-      cout << (int)c << "\r\n";
-    } else {
-      cout << (int)c << " " << c << "\r\n";
-    }
-
-    if (c == 'q')
-      break;
+  Terminal::getInstance().refresh();
+  for (int key = reader.readKey(); true; key = reader.readKey()) {
+    processor.processKey(key);
+    Terminal::getInstance().refresh();
   }
 
   return 0;

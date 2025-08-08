@@ -3,13 +3,24 @@
 
 #include <termios.h>
 
+struct TerminalConfig {
+  int rows;
+  int cols;
+  int x;
+  int y;
+};
+
 class Terminal {
 public:
   static Terminal &getInstance();
 
 private:
-  termios original;
+  termios _original;
 
+public:
+  TerminalConfig config;
+
+private:
   Terminal();
 
 public:
@@ -20,8 +31,14 @@ public:
   ~Terminal();
 
 private:
-  void changeTerminalFromCanonicalToRawMode();
-  void changeTerminalFromRawToCanonicalMode();
+  void _changeTerminalFromCanonicalToRawMode();
+  void _changeTerminalFromRawToCanonicalMode();
+  void _initTerminalConfig();
+
+public:
+  char read();
+  void clear();
+  void refresh();
 };
 
 #endif // TERMINAL_HPP
